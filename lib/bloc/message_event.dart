@@ -13,10 +13,3 @@ class FetchMessageEvent extends MessageEvent{
   // TODO: implement props
   List<Object> get props => throw UnimplementedError();  
 }
-
-// class InitialEvent extends MessageEvent{
-//   @override
-//   // TODO: implement props
-//   List<Object> get props => throw UnimplementedError();
-  
-// }

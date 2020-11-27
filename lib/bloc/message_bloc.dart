@@ -15,6 +15,7 @@ class MessageBloc extends Bloc<MessageEvent,MessageState>{
 
   @override
   Stream<MessageState> mapEventToState(MessageEvent event) async*{
+
     if(event is FetchMessageEvent){
       yield MessageLoadingState(message: event.message);
       try{

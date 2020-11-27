@@ -13,15 +13,15 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+  int counter = 0, flip = 0;
   MessageBloc messageBloc;
-  List<Message> messagesGlobal=[];
+  List<Message> messagesGlobal = [];
   final controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     messageBloc = BlocProvider.of<MessageBloc>(context);
-    messageBloc.add(FetchMessageEvent(message: "Hello how are you",sender: ""));
   }
 
   @override
@@ -51,25 +51,36 @@ class _ChatState extends State<Chat> {
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: BlocBuilder<MessageBloc, MessageState>(
-          // ignore: missing_return
           builder: (context, state) {
             if (state is MessageInitialState) {
-              return _buildCollumn(messagesGlobal);
+              print("Initial state triggered");
+              return _buildCollumn([]);
             } else if (state is MessageLoadingState) {
-              messagesGlobal.add(Message(text: state.message,isMe: true));
-              messagesGlobal.add(Message(isMe: false, text: "loading"));
-              return _buildCollumn(messagesGlobal);
+              print("Loading state triggered");
+              counter=1;
+              List<Message> list = [];
+              if (flip == 0) {
+                list = [Message(text: state.message, isMe: true)];
+                flip = 1;
+              }
+              return _buildCollumn(list);
             } else if (state is MessageLoadedState) {
-              List<Message> newmessage = state.replies
-                  .map((e) => Message(text: e.text, isMe: false))
-                  .toList();
-              if (messagesGlobal.isNotEmpty) messagesGlobal.removeLast();
-              messagesGlobal.addAll(newmessage);
-              return _buildCollumn(messagesGlobal);
+              print("Loaded state triggered");
+              List<Message> newmessage = [];
+              if (counter ==1) {
+                newmessage = state.replies
+                    .map((e) => Message(text: e.text, isMe: false))
+                    .toList();
+                flip = 0;
+                counter=0;
+              }
+              return _buildCollumn(newmessage);
             } else if (state is MessageErrorState) {
+              print("Error state triggered");
               return _buildError(state.message);
             } else {
-              return Text("Lol");
+              print("Else state triggered");
+              return _buildCollumn([]);
             }
           },
         ),
@@ -130,6 +141,7 @@ class _ChatState extends State<Chat> {
   }
 
   _buildCollumn(List<Message> messages) {
+    messagesGlobal.addAll(messages);
     return Column(
       children: <Widget>[
         Expanded(
@@ -149,9 +161,9 @@ class _ChatState extends State<Chat> {
               child: ListView.builder(
                 reverse: false,
                 padding: EdgeInsets.only(top: 15.0),
-                itemCount: messages.length,
+                itemCount: messagesGlobal.length,
                 itemBuilder: (BuildContext context, int index) {
-                  Message message = messages[index];
+                  Message message = messagesGlobal[index];
                   bool isMe = message.isMe;
                   if (message.text == "loading")
                     return CircularProgressIndicator();
@@ -189,6 +201,7 @@ class _ChatState extends State<Chat> {
                   onPressed: () {
                     messageBloc.add(FetchMessageEvent(
                         message: controller.text, sender: ""));
+                        controller.clear();
                   }),
             ],
           ),
@@ -197,11 +210,11 @@ class _ChatState extends State<Chat> {
     );
   }
 
-
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     controller.dispose();
+    messageBloc.close();
   }
 }
