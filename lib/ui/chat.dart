@@ -29,25 +29,16 @@ class _ChatState extends State<Chat> {
     return Scaffold(
       backgroundColor: Color(0xff1d2d50),
       appBar: AppBar(
-        backgroundColor: Color(0xff1d2d50),
-        title: Text(
-          "BITS-Queries",
-          style: TextStyle(
-            color: Color(0xffF5F7DC),
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
+          backgroundColor: Color(0xff1d2d50),
+          title: Text(
+            "BITS-Queries",
+            style: TextStyle(
+              color: Color(0xffF5F7DC),
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        elevation: 0.0,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.more_horiz),
-            iconSize: 30.0,
-            color: Colors.white,
-            onPressed: () {},
-          ),
-        ],
-      ),
+          elevation: 0.0),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: BlocBuilder<MessageBloc, MessageState>(
@@ -57,7 +48,7 @@ class _ChatState extends State<Chat> {
               return _buildCollumn([]);
             } else if (state is MessageLoadingState) {
               print("Loading state triggered");
-              counter=1;
+              counter = 1;
               List<Message> list = [];
               if (flip == 0) {
                 list = [Message(text: state.message, isMe: true)];
@@ -67,12 +58,12 @@ class _ChatState extends State<Chat> {
             } else if (state is MessageLoadedState) {
               print("Loaded state triggered");
               List<Message> newmessage = [];
-              if (counter ==1) {
+              if (counter == 1) {
                 newmessage = state.replies
                     .map((e) => Message(text: e.text, isMe: false))
                     .toList();
                 flip = 0;
-                counter=0;
+                counter = 0;
               }
               return _buildCollumn(newmessage);
             } else if (state is MessageErrorState) {
@@ -153,24 +144,18 @@ class _ChatState extends State<Chat> {
                 topRight: Radius.circular(30.0),
               ),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
-              ),
-              child: ListView.builder(
-                reverse: false,
-                padding: EdgeInsets.only(top: 15.0),
-                itemCount: messagesGlobal.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Message message = messagesGlobal[index];
-                  bool isMe = message.isMe;
-                  if (message.text == "loading")
-                    return CircularProgressIndicator();
-                  else
-                    return _buildMessage(message, isMe);
-                },
-              ),
+            child: ListView.builder(
+              reverse: false,
+              padding: EdgeInsets.only(top: 15.0),
+              itemCount: messagesGlobal.length,
+              itemBuilder: (BuildContext context, int index) {
+                Message message = messagesGlobal[index];
+                bool isMe = message.isMe;
+                if (message.text == "loading")
+                  return CircularProgressIndicator();
+                else
+                  return _buildMessage(message, isMe);
+              },
             ),
           ),
         ),
@@ -201,7 +186,7 @@ class _ChatState extends State<Chat> {
                   onPressed: () {
                     messageBloc.add(FetchMessageEvent(
                         message: controller.text, sender: ""));
-                        controller.clear();
+                    controller.clear();
                   }),
             ],
           ),
@@ -212,7 +197,6 @@ class _ChatState extends State<Chat> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     controller.dispose();
     messageBloc.close();

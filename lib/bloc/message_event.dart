@@ -9,7 +9,5 @@ class FetchMessageEvent extends MessageEvent{
 
   FetchMessageEvent({this.sender,this.message});
   @override
-  // ignore: todo
-  // TODO: implement props
   List<Object> get props => throw UnimplementedError();  
 }

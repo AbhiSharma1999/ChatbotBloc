@@ -1,3 +1,3 @@
 class AppStrings {
-  static String url = "https://748fa80a7bc5.ngrok.io/rasa/rasareq";
+  static String url = "https://a78c9657aaf2.ngrok.io/rasa/rasareq";
 }

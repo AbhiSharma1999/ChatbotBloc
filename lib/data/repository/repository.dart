@@ -24,7 +24,7 @@ class RepositoryImplementation implements Repository{
       var statusCode = response.statusCode;
       print(statusCode);
       if(statusCode==200){
-        jsonResponse = json.decode(response.body);
+        jsonResponse = json.decode(utf8.decode(response.bodyBytes));
         var parsedResponse = ReplyArray.fromJson(jsonResponse);
         var list = parsedResponse.replies;
         return list;
